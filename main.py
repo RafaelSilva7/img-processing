@@ -10,7 +10,7 @@ def config_option():
     parser = OptionParser(version='%prog v1.0', usage='usage: %prog [option] arg1')
     parser.add_option('-i', '--image', dest='image', metavar='PATH', help='path of the image to be used.', type='string')
     parser.add_option('-t', '--type', dest='type', metavar='TYPE', choices=('neighbor','bilinear', 'bicubic'), help='Type of interpolation to be used. {neighbor, bilinear, bicubic}')
-    parser.add_option('-s', '--scale', dest='factory', help='Increase/decrease factor. [0 = 0% ,1 = 100%]')
+    parser.add_option('-s', '--scale', dest='factory', help='Increase/decrease factor. [0 = 0%, 1 = 100%]')
     parser.add_option('-o', '--output', dest='output', help='Name of output image.')
 
     return parser
@@ -57,7 +57,7 @@ def main():
         print('Output image saved in: ./output/' + options.output)
 
     except IOError:
-        print('Error: Image not found. informed path: ' + options.image + '')
+        print('Error:\nImage not found. informed path: ' + options.image)
 
 
 if __name__ == "__main__":

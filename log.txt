@@ -1,0 +1,64 @@
+path of image: img/lena.png
+Size of origin image: (512,512)
+
+neighbor
+Function: nearest_neighbor(img_input, factory):
+        New size of image: (256,256)
+
+Time running: 0.2781s
+Output image saved in: ./output/neigbor0.5.png
+
+
+path of image: img/lena.png
+Size of origin image: (512,512)
+
+neighbor
+Function: nearest_neighbor(img_input, factory):
+        New size of image: (1024,1024)
+
+Time running: 4.0881s
+Output image saved in: ./output/neigbor-2.png
+
+
+path of image: img/lena.png
+Size of origin image: (512,512)
+
+bilinear
+Function: bilinear(img_input, factory):
+        New size of image: (256,256)
+
+Time running: 0.7340s
+Output image saved in: ./output/bilinear-0.5.png
+
+
+path of image: img/lena.png
+Size of origin image: (512,512)
+
+bilinear
+Function: bilinear(img_input, factory):
+        New size of image: (1024,1024)
+
+Time running: 7.7461s
+Output image saved in: ./output/bilinear-2.png
+
+
+path of image: img/lena.png
+Size of origin image: (512,512)
+
+bicubic
+Function: bicubic(img_input, factory):
+        New size of image: (256,256)
+
+Time running: 1.2762s
+Output image saved in: ./output/bicubic-0.5.png
+
+
+path of image: img/lena.png
+Size of origin image: (512,512)
+
+bicubic
+Function: bicubic(img_input, factory):
+        New size of image: (1024,1024)
+
+Time running: 10.9529s
+Output image saved in: ./output/bicubic-2.png
