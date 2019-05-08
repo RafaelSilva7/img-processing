@@ -1,5 +1,5 @@
 from PIL import Image
-from optparse import OptionParser
+from optparse import OptionParser, OptionValueError
 from interpolation import nearest_neighbor, bicubic, bilinear
 import timeit
 
@@ -7,11 +7,22 @@ import timeit
 def config_option():
     """
     """
+
+    def scale_callback(option, opt, value, parser):
+        """
+        """
+        if parser.values.type == 'labeling':
+            raise OptionValueError('can\'t use -s with --type = labeling')
+        elif float(value) < 0.25:
+            raise OptionValueError('Increase/decrease factory must be greater than 0.25 or 25%')
+        setattr(parser.values, option.dest, value)
+
+
     parser = OptionParser(version='%prog v1.0', usage='usage: %prog [option] arg1')
     parser.add_option('-i', '--image', dest='image', metavar='PATH', help='path of the image to be used.', type='string')
-    parser.add_option('-t', '--type', dest='type', metavar='TYPE', choices=('neighbor','bilinear', 'bicubic'), help='Type of interpolation to be used. {neighbor, bilinear, bicubic}')
-    parser.add_option('-s', '--scale', dest='factory', help='Increase/decrease factor. [0 = 0%, 1 = 100%]')
-    parser.add_option('-o', '--output', dest='output', help='Name of output image.')
+    parser.add_option('-t', '--type', dest='type', metavar='TYPE', choices=('neighbor','bilinear', 'bicubic', 'labeling'), help='Type of interpolation to be used. {neighbor, bilinear, bicubic, labeling}')
+    parser.add_option('-s', '--scale', dest='factory', help='Increase/decrease factor. It is must be greater than 0.25 or 25%. Can\'t use with --type = labeling [0 = 0%, 1.5 = 150%]', action='callback', callback=scale_callback, type='str')
+    parser.add_option('-o', '--output', dest='output', help='Name of output image. e.g: lena.png')
 
     return parser
 
@@ -45,7 +56,7 @@ def main():
             img_output.show()
             img_output.save('./output/'+options.output, 'PNG')
 
-        else:
+        elif options.type == 'bicubic':
             start_time = timeit.default_timer()
             img_output = bicubic(img_input, float(options.factory))
             stop_time = timeit.default_timer()
@@ -53,7 +64,14 @@ def main():
             print('Time running: %.4fs' % (stop_time - start_time))
             img_output.show()
             img_output.save('./output/'+options.output, 'PNG')
-        
+        else:
+            start_time = timeit.default_timer()
+            img_output = labeling(img_input)
+            stop_time = timeit.default_timer()
+
+            print('Time running: %.4fs' % (stop_time - start_time))
+            img_output.show()
+            img_output.save('./output/' + options.output, 'PNG')
         print('Output image saved in: ./output/' + options.output)
 
     except IOError:
