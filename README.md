@@ -66,4 +66,4 @@ Output image saved in: ./output/lena-1.7.png
 * **Rafael da Costa Silva** - [RafaelSilva7](https://github.com/RafaelSilva7)
 
 ## License
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/RafaelSilva7/img-processing/blob/master/LICENSE) file for details
