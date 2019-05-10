@@ -79,7 +79,7 @@ def main():
             print('Time running: %.4fs' % (stop_time - start_time))
             img_output.show()
             img_output.save('./output/' + options.output, 'PNG')
-            #print('Number of objects: '+ str(num_labels))
+            print('Number of objects: '+ str(num_labels))
         print('Output image saved in: ./output/' + options.output)
 
     except IOError:

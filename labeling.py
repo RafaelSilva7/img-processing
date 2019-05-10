@@ -7,8 +7,8 @@ def labeling(img_input):
     pixel_dict = {}
     (width, height) = img_input.size
 
-    for i in range(width):
-        for j in range(height):
+    for j in range(height):
+        for i in range(width):
             p = (i,j)
             p_r = (i-1,j)
             p_s = (i,j-1)
@@ -69,11 +69,7 @@ def labeling(img_input):
     #img_output = Image.new('L', (width, height), 255)
     num_labels = len(set(labels))
     s_labels = set(labels)
-    c = int(255/num_labels)
-    #print(set(labels))
-    #print('const = ' + str(c))
-    #print('labels = ' + str(num_labels))
-    #print(pixel_dict)
+    c = int(255/num_labels) # color contant
     for (pixel, color) in pixel_dict.items():
         i = 0
         for x in s_labels:
