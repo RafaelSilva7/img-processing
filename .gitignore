@@ -127,3 +127,6 @@ pi_env/
 
 # vscode dir
 .vscode/
+
+# ouptut images
+ouptut/*

@@ -35,7 +35,7 @@ def main():
     (options, argvs) = config_option().parse_args()
     
     try:
-        print(options.type)
+        print('algortihm used: '+ str(options.type))
         if options.type != 'labeling':
             img_input = Image.open(options.image).convert('L')
         else:
