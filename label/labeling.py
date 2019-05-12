@@ -1,8 +1,15 @@
 from PIL import Image
 
 def labeling(img_input):
+    """Labeling objects in the image
+
+    Args:
+        img_input: Image to be labeled.
+
+    Return:
+        Labeled image and number of objects in labeled
     """
-    """
+
     labels = []
     pixel_dict = {}
     (width, height) = img_input.size

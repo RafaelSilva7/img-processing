@@ -129,4 +129,7 @@ pi_env/
 .vscode/
 
 # ouptut images
-ouptut/*
+output/*
+
+# My log
+log.txt
