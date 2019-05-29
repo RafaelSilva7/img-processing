@@ -11,9 +11,9 @@ def equalizeHistogram(img_input):
         Equalized image and old histogram
     """
 
-    print('\tFunction: equalization(img_input):')
+    print(f'\tFunction: equalization(img_input):')
     (width, height) = img_input.size
-    print('\tNew size of image: ({},{})\n'.format(width,height))
+    print(f'\tNew size of image: ({width},{height})\n')
 
     img_output = Image.new('L', (width, height))
     num_pixel = width*height
