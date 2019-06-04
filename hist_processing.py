@@ -1,7 +1,7 @@
 from PIL import Image
 import numpy as np
 
-def equalizeHistogram(img_input):
+def equalize(img_input):
     """Equalize image histogram
 
     Args:

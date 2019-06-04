@@ -1,6 +1,28 @@
 # img-processing
 Set of algorithms in developed in Image Processing class in Federal University of Tocantins
 
+### List of implemented algorithms
+* Interpolation (Nearest Neighbor, Bilinear, Bicubic)
+```
+$ python3 main.py -i <path> -a <algorithm> -f <float> -o <name>
+```
+* Labeling
+```
+$ python3 main.py -i <path> -a labeling -o <name>
+```
+* Histogram Processing (equalize)
+```
+$ python3 main.py -i <path> -a equalize -o <name>
+```
+* Intensity Transformation (Logarithmic and PowerLow)
+```
+$ python3 main.py -i <path> -a <algorithm> -f <float> [<float>] -o <name>
+```
+* Filters (Laplacian and Sobel)
+```
+$ python3 main.py -i <path> -a <algorithm> -m <mask> -o <name>
+```
+
 ### Prerequisites
 Python3.6
 ```
@@ -31,25 +53,25 @@ For run the application is necessary run the encironment and inform:
 ```
 $ source <env_name>/bin/activate
 $ python3 main.py -h
-Usage: main.py [option] arg1
+Usage: main.py -i <path> -a <algorithm> [args]
 
 Options:
   --version             show program's version number and exit
   -h, --help            show this help message and exit
-  -i PATH, --image=PATH
+  -i path, --image=path
                         path of the image to be used.
-  -t TYPE, --type=TYPE  Type of interpolation to be used. {neighbor, bilinear,
-                        bicubic, labeling}
-  -s FACTOR, --scale=FACTOR
-                        Increase/decrease factor. It is must be greater than
-                        0.25 or 25%. Can't use with --type = labeling [0 = 0%,
-                        1.5 = 150%]
-  -o OUTPUT, --output=OUTPUT
+  -a name, --algorithm=name
+                        Algorithm name to be used. List in README.md
+  -f float, --factor=float
+                        Increase/decrease for interpolation and constant for
+                        the logarithmic transformation algorithm.
+  -o name.png, --output=name.png
                         Name of output image. e.g: lena.png
+  -m name, --mask=name  Mask name of filtering algorithms
 ```
 Example of run a test:
 ```
-$ python3 main.py -i img/lena.png -t bicubic -s 1.7 -o lena-1.7.png
+$ python3 main.py -i img/lena.png -a bicubic -f 1.7 -o lena-1.7.png
 algortihm used: bicubic
 path of image: img/lena.png
 Size of origin image: (512,512)
@@ -62,7 +84,7 @@ Output image saved in: ./output/lena-1.7.png
 ```
 
 ## Authors
-* **Felipe Rodrigues Costa**
+* **Felipe Rodrigues Costa** - [FelipeFRC](https://github.com/FelipeFRC)
 * **Rafael da Costa Silva** - [RafaelSilva7](https://github.com/RafaelSilva7)
 
 ## License

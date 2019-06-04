@@ -4,36 +4,23 @@ import numpy as np
 from optparse import OptionParser, OptionValueError
 from PIL import Image
 
-from interpolation.neighbor import nearestNeighbor
-from interpolation.linear import bilinear
-from interpolation.cubic import bicubic
-
-from operators.arithmetic import add, division, multiply, subtract
-from operators.geometric import rotate, mirrorHorizontal, mirrorVertical
-
-from transformation.intensity import logarithmic, powerLow
-from label.labeling import labeling
-from hist_processing.equalization import equalizeHistogram
+from operators import arithmetic, geometric
+import filters, interpolation, transformation, hist_processing, label
 
 
 def config_option():
-    """Configure optparser object
-
-    Args:
-        None.
-    Return:
-        Configured optparser object.
-    """
+    """Configure optparser object"""
 
     choice = ('neighbor','bilinear', 'bicubic', 'labeling', 'equalize', 'rotate', 
               'add', 'division', 'multiply', 'subtract', 'transLog', 'powerLow',
-              'mirrorH', 'mirrorV')
+              'mirrorH', 'mirrorV', 'laplace', 'gradient', 'sobel')
 
-    parser = OptionParser(version='%prog v1.0', usage='usage: %prog -i <path>[<path> float float] -a <algorithm> [-f <float>] -o <name.png>')
+    parser = OptionParser(version='%prog v1.0', usage='usage: %prog -i <path> -a <algorithm> [args]')
     parser.add_option('-i', '--image', dest='image', metavar='path', help='path of the image to be used.', type='string')
     parser.add_option('-a', '--algorithm', dest='algorithm', metavar='name', choices=choice, help='Algorithm name to be used. List in README.md')
     parser.add_option('-f', '--factor', dest='factor', metavar='float', help='Increase/decrease for interpolation and constant for the logarithmic transformation algorithm.', type='string')
     parser.add_option('-o', '--output', dest='output', metavar='name.png', help='Name of output image. e.g: lena.png', type='string')
+    parser.add_option('-m', '--mask', dest='mask', metavar='name', help='Mask name of filtering algorithms')
 
     return parser
 
@@ -41,7 +28,7 @@ def config_option():
 def checkParser(parser, argvs):
         """Callback function for check num of image"""
 
-        if parser.algorithm in ('neighbor','bilinear', 'bicubic') and (parser.factor is None or parser.factor < 0.25):
+        if parser.algorithm in ('neighbor','bilinear', 'bicubic') and (parser.factor is None or float(parser.factor) < 0.25):
             raise OptionValueError('use --scale with --type = {neighbor,bilinear, bicubic}, the value must be greater than 0.25')
         
         if parser.algorithm in ('add', 'division', 'multiply', 'subtract') and (len(argvs) == 0 or parser.factor != None):
@@ -52,9 +39,8 @@ def checkParser(parser, argvs):
 
 
 def main():
-    """
-    Main function app
-    """
+    """Main function app"""
+
     (options, argvs) = config_option().parse_args()
     checkParser(options, argvs)
 
@@ -80,29 +66,29 @@ def main():
 
     if options.algorithm == 'neighbor':
         start_time = timeit.default_timer()
-        img_output = nearestNeighbor(img_input, float(options.factor))
+        img_output = interpolation.nearestNeighbor(img_input, float(options.factor))
         stop_time = timeit.default_timer()
 
     elif options.algorithm == 'bilinear':
         start_time = timeit.default_timer()
-        img_output = bilinear(img_input, float(options.factor))
+        img_output = interpolation.bilinear(img_input, float(options.factor))
         stop_time = timeit.default_timer()
 
     elif options.algorithm == 'bicubic':
         start_time = timeit.default_timer()
-        img_output = bicubic(img_input, float(options.factor))
+        img_output = interpolation.bicubic(img_input, float(options.factor))
         stop_time = timeit.default_timer()
 
     elif options.algorithm == 'labeling':
         start_time = timeit.default_timer()
-        (img_output, num_labels) = labeling(img_input)
+        (img_output, num_labels) = label.labeling(img_input)
         stop_time = timeit.default_timer()
         
         print('Number of objects: '+ str(num_labels))
 
     elif options.algorithm == 'equalize':
         start_time = timeit.default_timer()
-        (img_output, hist_old) = equalizeHistogram(img_input)
+        (img_output, hist_old) = hist_processing.equalize(img_input)
         stop_time = timeit.default_timer()
 
         hist_new = np.zeros(256)
@@ -132,62 +118,68 @@ def main():
     elif options.algorithm == 'add':
         start_time = timeit.default_timer()
         if len(argvs) == 3:
-            img_output = add(img_input, img2_input, weight1=float(argvs[1]), weight2=float(argvs[2]))
+            img_output = arithmetic.add(img_input, img2_input, weight1=float(argvs[1]), weight2=float(argvs[2]))
         else:
-                img_output = add(img_input, img2_input)
+                img_output = arithmetic.add(img_input, img2_input)
         stop_time = timeit.default_timer()
 
     elif options.algorithm == 'division':
         start_time = timeit.default_timer()
         if len(argvs) == 3:
-            img_output = division(img_input, img2_input, weight1=float(argvs[1]), weight2=float(argvs[2]))
+            img_output = arithmetic.division(img_input, img2_input, weight1=float(argvs[1]), weight2=float(argvs[2]))
         else:
-                img_output = division(img_input, img2_input)
+                img_output = arithmetic.division(img_input, img2_input)
         stop_time = timeit.default_timer()
 
     elif options.algorithm == 'multiply':
         start_time = timeit.default_timer()
         if len(argvs) == 3:
-            img_output = multiply(img_input, img2_input, weight1=float(argvs[1]), weight2=float(argvs[2]))
+            img_output = arithmetic.multiply(img_input, img2_input, weight1=float(argvs[1]), weight2=float(argvs[2]))
         else:
-                img_output = multiply(img_input, img2_input)
+                img_output = arithmetic.multiply(img_input, img2_input)
         stop_time = timeit.default_timer()
     
     elif options.algorithm == 'subtract':
         start_time = timeit.default_timer()
         if len(argvs) == 3:
-            img_output = subtract(img_input, img2_input, weight1=float(argvs[1]), weight2=float(argvs[2]))
+            img_output = arithmetic.subtract(img_input, img2_input, weight1=float(argvs[1]), weight2=float(argvs[2]))
         else:
-                img_output = subtract(img_input, img2_input)
+                img_output = arithmetic.subtract(img_input, img2_input)
         stop_time = timeit.default_timer()
 
     elif options.algorithm == 'transLog':
         start_time = timeit.default_timer()
-        img_output = logarithmic(img_input, float(options.factor))
+        img_output = transformation.logarithmic(img_input, float(options.factor))
         stop_time = timeit.default_timer()
 
     elif options.algorithm == 'powerLow':
         start_time = timeit.default_timer()
         if len(argvs) == 1:
-            img_output = powerLow(img_input, float(options.factor), float(argvs[0]))
+            img_output = transformation.powerLow(img_input, float(options.factor), float(argvs[0]))
         else:
-            img_output = powerLow(img_input, float(options.factor))
+            img_output = transformation.powerLow(img_input, float(options.factor))
         stop_time = timeit.default_timer()
 
     elif options.algorithm == 'rotate':
         start_time = timeit.default_timer()
-        img_output = rotate(img_input, float(options.factor))
+        img_output = geometric.rotate(img_input, float(options.factor))
         stop_time = timeit.default_timer()
 
     elif options.algorithm == 'mirrorH':
         start_time = timeit.default_timer()
-        img_output = mirrorHorizontal(img_input)
+        img_output = geometric.mirrorHorizontal(img_input)
         stop_time = timeit.default_timer()
 
     elif options.algorithm == 'mirrorV':
         start_time = timeit.default_timer()
-        img_output = mirrorVertical(img_input)
+        img_output = geometric.mirrorVertical(img_input)
         stop_time = timeit.default_timer()
+
+    elif options.algorithm in ('laplace', 'sobel'):
+        start_time = timeit.default_timer()
+        img_output = filters.applyFitler(img_input, options.algorithm, options.mask)
+        stop_time = timeit.default_timer()
+
 
     print('Time running: %.4fs' % (stop_time - start_time))
     img_output.save('./output/' + options.output, 'PNG')
