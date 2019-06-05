@@ -13,7 +13,7 @@ def config_option():
 
     choice = ('neighbor','bilinear', 'bicubic', 'labeling', 'equalize', 'rotate', 
               'add', 'division', 'multiply', 'subtract', 'transLog', 'powerLow',
-              'mirrorH', 'mirrorV', 'laplace', 'gradient', 'sobel')
+              'mirrorH', 'mirrorV', 'laplace', 'sobel', 'mean')
 
     parser = OptionParser(version='%prog v1.0', usage='usage: %prog -i <path> -a <algorithm> [args]')
     parser.add_option('-i', '--image', dest='image', metavar='path', help='path of the image to be used.', type='string')
@@ -175,7 +175,7 @@ def main():
         img_output = geometric.mirrorVertical(img_input)
         stop_time = timeit.default_timer()
 
-    elif options.algorithm in ('laplace', 'sobel'):
+    elif options.algorithm in ('laplace', 'sobel', 'mean'):
         start_time = timeit.default_timer()
         img_output = filters.applyFitler(img_input, options.algorithm, options.mask)
         stop_time = timeit.default_timer()

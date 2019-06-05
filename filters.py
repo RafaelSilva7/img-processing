@@ -6,14 +6,18 @@ LAP_DEFAULT_INV = 3
 LAP_EXTEND_INV = 4
 SOBEL_H = 5
 SOBEL_V = 6
+MEAN_3 = 7
+MEAN_5 = 8
 
-lap_mask = {
+list_mask = {
     'lap_default' : LAP_DEFAULT,
     'lap_extend' : LAP_EXTEND,
     'lap_default_inv' : LAP_DEFAULT_INV,
     'lap_extend_inv' : LAP_EXTEND_INV,
     'sobel_h' : SOBEL_H,
-    'sobel_v' : SOBEL_V
+    'sobel_v' : SOBEL_V,
+    'mean_3' : MEAN_3,
+    'mean_5' : MEAN_5
 }
 
 def applyFitler(img_input, filter, mask):
@@ -28,16 +32,20 @@ def applyFitler(img_input, filter, mask):
     if filter == 'laplace':
         for i in range(width):
             for j in range(height):
-                img_output.putpixel((i,j), laplacian(i,j, lap_mask[mask], img_input))
+                img_output.putpixel((i,j), laplacian(i,j, list_mask[mask], img_input))
 
     elif filter == 'sobel':
         for i in range(width):
             for j in range(height):
-                img_output.putpixel((i,j), sobel(i,j, lap_mask[mask], img_input))
+                img_output.putpixel((i,j), sobel(i,j, list_mask[mask], img_input))
+    
+    else:
+        if list_mask[mask] == MEAN_3:
+            return Media3x3(img_input)
+        else:
+            return Media5x5(img_input)
 
     return img_output
-
-# Average Filter
 
 
 # Laplacian Filter
@@ -108,3 +116,63 @@ def sobel(i, j, mask, img_input):
         p6 = img_input.getpixel((i+1,j+1))
 
         return (-1*p1) - 2*p2 - p3 + p4 + 2*p5 + p6
+
+
+def Media3x3(Imagem): #Filtro de Média usando mascara de 3x3
+	
+	Imagem = Imagem.convert("L")
+
+	matrizImagem = Imagem.load()
+
+	A, L = Imagem.size
+
+	Matriz = {}
+
+	for x in range(A):
+		for y in range(L):
+			Matriz[x,y] = matrizImagem[x,y]
+
+	finalImagem = Image.new('L', (A, L))
+
+	for x in range(A):
+		for y in range(L):
+			if x > 1 and y > 1 and x < A-1 and y < L-1 : #Excluir as bordas
+				pixel = int((Matriz[x+1,y-1] + Matriz[x,y-1] + Matriz[x-1,y-1] + Matriz[x+1,y] + Matriz[x,y] + Matriz[x-1,y] + Matriz[x+1,y+1] + Matriz[x,y+1] + Matriz[x-1,y+1]) / 9)
+				finalImagem.putpixel((x,y),pixel)
+			else: #Preenche as bordas usando o Replicação
+				pixel = Matriz[x,y]
+				finalImagem.putpixel((x,y),pixel)
+	return finalImagem
+
+
+def Media5x5(Imagem): #Filtro de Média usando mascara de 3x3
+	
+	Imagem = Imagem.convert("L")
+	
+	matrizImagem = Imagem.load()
+
+	A, L = Imagem.size
+
+	Matriz = {}
+
+	for x in range(A):
+		for y in range(L):
+			Matriz[x,y] = matrizImagem[x,y]
+
+	finalImagem = Image.new('L', (A, L))
+
+	for x in range(A):
+		for y in range(L):
+			if x > 2 and y > 2 and x < A-2 and y < L-2 : #Excluir as bordas
+				pixel = int((Matriz[x+1,y-1] + Matriz[x,y-1] + Matriz[x-1,y-1] + Matriz[x+1,y] + Matriz[x,y]
+							 + Matriz[x-1,y] + Matriz[x+1,y+1] + Matriz[x,y+1] + Matriz[x-1,y+1] + Matriz[x-2,y-2]
+							 + Matriz[x,y-2] + Matriz[x+2,y-2] + Matriz[x+2,y] + Matriz[x-2,y-1] + Matriz[x-2,y]
+							 + Matriz[x+2,y+2] + Matriz[x,y+2] + Matriz[x-2,y+2] + Matriz[x-1,y-1] + Matriz[x+2,y-1]
+							 + Matriz[x+2,y+1] + Matriz[x+1,y+2] + Matriz[x-2,y+2] + Matriz[x+1,y+2] + Matriz[x+2,y+1]) / 25)
+				
+				finalImagem.putpixel((x,y),pixel)
+			else: #Preenche as bordas usando o Replicação
+				pixel = Matriz[x,y]
+				finalImagem.putpixel((x,y),pixel)
+
+	return finalImagem
