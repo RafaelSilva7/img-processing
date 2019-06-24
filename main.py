@@ -5,15 +5,15 @@ from optparse import OptionParser, OptionValueError
 from PIL import Image
 
 from operators import arithmetic, geometric
-import filters, interpolation, transformation, hist_processing, label
-
+import filters, interpolation, transformation, hist_processing
+import label, morphology
 
 def config_option():
     """Configure optparser object"""
 
     choice = ('neighbor','bilinear', 'bicubic', 'labeling', 'equalize', 'rotate', 
               'add', 'division', 'multiply', 'subtract', 'transLog', 'powerLow',
-              'mirrorH', 'mirrorV', 'laplace', 'sobel', 'mean')
+              'mirrorH', 'mirrorV', 'laplace', 'sobel', 'mean', 'erosion', 'dilation', 'extractContours')
 
     parser = OptionParser(version='%prog v1.0', usage='usage: %prog -i <path> -a <algorithm> [args]')
     parser.add_option('-i', '--image', dest='image', metavar='path', help='path of the image to be used.', type='string')
@@ -21,6 +21,7 @@ def config_option():
     parser.add_option('-f', '--factor', dest='factor', metavar='float', help='Increase/decrease for interpolation and constant for the logarithmic transformation algorithm.', type='string')
     parser.add_option('-o', '--output', dest='output', metavar='name.png', help='Name of output image. e.g: lena.png', type='string')
     parser.add_option('-m', '--mask', dest='mask', metavar='name', help='Mask name of filtering algorithms')
+    parser.add_option('-e', '--structElement', dest='struct_element', metavar='path', help='Structuring element for morphology algorithms.')
 
     return parser
 
@@ -37,6 +38,9 @@ def checkParser(parser, argvs):
         if parser.algorithm is 'transLog' and (parser.factor is None):
             raise OptionValueError('the selected algorithm must have --factor parameter.')
 
+        if parser.algorithm in ('erosion', 'dilation') and parser.struct_element is None:
+            raise OptionValueError('the selected algorithm must have --structElement parameter.')
+
 
 def main():
     """Main function app"""
@@ -45,7 +49,7 @@ def main():
     checkParser(options, argvs)
 
     try:
-        if options.algorithm == 'labeling':
+        if options.algorithm in ('labeling', 'erosion', 'dilation', 'extractContours'):
             img_input = Image.open(options.image).convert('L').point(lambda x : 255 if x > 127 else 0, mode='1')
         else:
             img_input = Image.open(options.image).convert('L')
@@ -178,6 +182,21 @@ def main():
     elif options.algorithm in ('laplace', 'sobel', 'mean'):
         start_time = timeit.default_timer()
         img_output = filters.applyFitler(img_input, options.algorithm, options.mask)
+        stop_time = timeit.default_timer()
+
+    elif options.algorithm == 'dilation':
+        start_time = timeit.default_timer()
+        img_output = morphology.dilation(img_input, options.struct_element)
+        stop_time = timeit.default_timer()
+
+    elif options.algorithm == 'erosion':
+        start_time = timeit.default_timer()
+        img_output = morphology.erosion(img_input, options.struct_element)
+        stop_time = timeit.default_timer()
+
+    elif options.algorithm == 'extractContours':
+        start_time = timeit.default_timer()
+        img_output = morphology.extractContours(img_input)
         stop_time = timeit.default_timer()
 
 
