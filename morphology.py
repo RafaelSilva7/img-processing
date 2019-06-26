@@ -12,6 +12,8 @@ def structuringElement(path):
         data['center'] = tuple(data['center'])
     return data
 
+
+
 def erosion(img_input, struct_path):
     """
     """
@@ -39,6 +41,7 @@ def erosion(img_input, struct_path):
     return img_output
 
 
+
 def dilation(img_input, struct_path):
     """
     """
@@ -64,6 +67,7 @@ def dilation(img_input, struct_path):
     return img_output
 
 
+
 def extractContours(img_input):
     """
     """
@@ -80,3 +84,137 @@ def extractContours(img_input):
                 img_output.putpixel((i,j), 0)
 
     return img_output
+
+
+
+def opening(img_input, struct_path):
+    """
+    """
+    print('opening(img_input, struct_path):')
+    (width, height) = img_input.size
+    print(f'\tNew size of image: ({width},{height})\n')
+
+    temp = erosion(img_input, struct_path)
+    return dilation(temp, struct_path)    
+
+
+
+def ending(img_input, struct_path):
+    """
+    """
+    print('ending(img_input, struct_path):')
+    (width, height) = img_input.size
+    print(f'\tNew size of image: ({width},{height})\n')
+
+    temp = dilation(img_input, struct_path)
+    return erosion(temp, struct_path)  
+
+
+
+def erosionGray3(Imagem):
+    """
+    """
+	matrizImagem = Imagem.load()
+	A, L = Imagem.size
+	Matriz = {}
+
+	for x in range(A):
+		for y in range(L):
+			Matriz[x,y] = matrizImagem[x,y]
+
+	finalImagem = Image.new('L', (A, L))
+
+	for x in range(A):
+		for y in range(L):
+			if x > 1 and y > 1 and x < A-1 and y < L-1 :
+				pixel = min(Matriz[x,y], Matriz[x-1,y], Matriz[x+1,y], Matriz[x,y+1], Matriz[x,y-1])
+				finalImagem.putpixel((x,y),pixel)
+			else:
+				pixel = Matriz[x,y]
+				finalImagem.putpixel((x,y),pixel)
+
+	return finalImagem
+
+
+def erosionGray5(Imagem):
+    """
+    """
+	matrizImagem = Imagem.load()
+	A, L = Imagem.size
+	Matriz = {}
+
+	for x in range(A):
+		for y in range(L):
+			Matriz[x,y] = matrizImagem[x,y]
+
+	finalImagem = Image.new('L', (A, L))
+
+	for x in range(A):
+		for y in range(L):
+			if x > 2 and y > 2 and x < A-2 and y < L-2 :
+				pixel = pixel = min(Matriz[x+1,y-1], Matriz[x,y-1], Matriz[x-1,y-1], Matriz[x+1,y], Matriz[x,y]
+							 + Matriz[x-1,y], Matriz[x+1,y+1], Matriz[x,y+1], Matriz[x-1,y+1], Matriz[x-2,y-2]
+							 + Matriz[x,y-2], Matriz[x+2,y-2], Matriz[x+2,y], Matriz[x-2,y-1], Matriz[x-2,y]
+							 + Matriz[x+2,y+2], Matriz[x,y+2], Matriz[x-2,y+2], Matriz[x-1,y-1], Matriz[x+2,y-1]
+							 + Matriz[x+2,y+1], Matriz[x+1,y+2], Matriz[x-2,y+2], Matriz[x+1,y+2], Matriz[x+2,y+1])
+				finalImagem.putpixel((x,y),pixel)
+			else:
+				pixel = Matriz[x,y]
+				finalImagem.putpixel((x,y),pixel)
+
+	return finalImagem
+
+
+def dilationGray3(Imagem):
+    """
+    """
+	matrizImagem = Imagem.load()
+	A, L = Imagem.size
+	Matriz = {}
+
+	for x in range(A):
+		for y in range(L):
+			Matriz[x,y] = matrizImagem[x,y]
+
+	finalImagem = Image.new('L', (A, L))
+
+	for x in range(A):
+		for y in range(L):
+			if x > 1 and y > 1 and x < A-1 and y < L-1 :
+				pixel = max(Matriz[x,y], Matriz[x-1,y], Matriz[x+1,y], Matriz[x,y+1], Matriz[x,y-1])
+				finalImagem.putpixel((x,y),pixel)
+			else:
+				pixel = Matriz[x,y]
+				finalImagem.putpixel((x,y),pixel)
+
+	return finalImagem
+
+
+
+def dilationGray5(Imagem):
+    """
+    """
+	matrizImagem = Imagem.load()
+	A, L = Imagem.size
+	Matriz = {}
+
+	for x in range(A):
+		for y in range(L):
+			Matriz[x,y] = matrizImagem[x,y]
+
+	finalImagem = Image.new('L', (A, L))
+
+	for x in range(A):
+		for y in range(L):
+			if x > 2 and y > 2 and x < A-2 and y < L-2 :
+				pixel = pixel = max(Matriz[x+1,y-1], Matriz[x,y-1], Matriz[x-1,y-1], Matriz[x+1,y], Matriz[x,y]
+							 + Matriz[x-1,y], Matriz[x+1,y+1], Matriz[x,y+1], Matriz[x-1,y+1], Matriz[x-2,y-2]
+							 + Matriz[x,y-2], Matriz[x+2,y-2], Matriz[x+2,y], Matriz[x-2,y-1], Matriz[x-2,y]
+							 + Matriz[x+2,y+2], Matriz[x,y+2], Matriz[x-2,y+2], Matriz[x-1,y-1], Matriz[x+2,y-1]
+							 + Matriz[x+2,y+1], Matriz[x+1,y+2], Matriz[x-2,y+2], Matriz[x+1,y+2], Matriz[x+2,y+1])
+				finalImagem.putpixel((x,y),pixel)
+			else:
+				pixel = Matriz[x,y]
+				finalImagem.putpixel((x,y),pixel)
+
+	return finalImagem

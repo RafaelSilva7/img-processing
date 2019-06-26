@@ -13,7 +13,9 @@ def config_option():
 
     choice = ('neighbor','bilinear', 'bicubic', 'labeling', 'equalize', 'rotate', 
               'add', 'division', 'multiply', 'subtract', 'transLog', 'powerLow',
-              'mirrorH', 'mirrorV', 'laplace', 'sobel', 'mean', 'erosion', 'dilation', 'extractContours')
+              'mirrorH', 'mirrorV', 'laplace', 'sobel', 'mean', 'erosion', 'dilation', 
+              'extractContours', 'opening', 'ending', 'erosionGray3', 'erosionGray5', 
+              'dilationGray3', 'dilationGray5')
 
     parser = OptionParser(version='%prog v1.0', usage='usage: %prog -i <path> -a <algorithm> [args]')
     parser.add_option('-i', '--image', dest='image', metavar='path', help='path of the image to be used.', type='string')
@@ -38,7 +40,7 @@ def checkParser(parser, argvs):
         if parser.algorithm is 'transLog' and (parser.factor is None):
             raise OptionValueError('the selected algorithm must have --factor parameter.')
 
-        if parser.algorithm in ('erosion', 'dilation') and parser.struct_element is None:
+        if parser.algorithm in ('erosion', 'dilation', 'opening', 'ending', 'erosionGray3', 'erosionGray5', 'dilationGray3', 'dilationGray5') and parser.struct_element is None:
             raise OptionValueError('the selected algorithm must have --structElement parameter.')
 
 
@@ -49,7 +51,7 @@ def main():
     checkParser(options, argvs)
 
     try:
-        if options.algorithm in ('labeling', 'erosion', 'dilation', 'extractContours'):
+        if options.algorithm in ('labeling', 'erosion', 'dilation', 'extractContours', 'opening', 'ending', 'erosionGray3', 'erosionGray5', 'dilationGray3', 'dilationGray5'):
             img_input = Image.open(options.image).convert('L').point(lambda x : 255 if x > 127 else 0, mode='1')
         else:
             img_input = Image.open(options.image).convert('L')
@@ -197,6 +199,36 @@ def main():
     elif options.algorithm == 'extractContours':
         start_time = timeit.default_timer()
         img_output = morphology.extractContours(img_input)
+        stop_time = timeit.default_timer()
+
+    elif options.algorithm == 'opening':
+        start_time = timeit.default_timer()
+        img_output = morphology.opening(img_input, options.struct_element)
+        stop_time = timeit.default_timer()
+
+    elif options.algorithm == 'ending':
+        start_time = timeit.default_timer()
+        img_output = morphology.ending(img_input, options.struct_element)
+        stop_time = timeit.default_timer()
+
+    elif options.algorithm == 'dilationGray3':
+        start_time = timeit.default_timer()
+        img_output = morphology.dilationGray3(img_input)
+        stop_time = timeit.default_timer()
+
+    elif options.algorithm == 'erosionGray3':
+        start_time = timeit.default_timer()
+        img_output = morphology.erosionGray3(img_input)
+        stop_time = timeit.default_timer()
+    
+    elif options.algorithm == 'dilationGray5':
+        start_time = timeit.default_timer()
+        img_output = morphology.dilationGray5(img_input)
+        stop_time = timeit.default_timer()
+
+    elif options.algorithm == 'erosionGray5':
+        start_time = timeit.default_timer()
+        img_output = morphology.erosionGray5(img_input)
         stop_time = timeit.default_timer()
 
 
