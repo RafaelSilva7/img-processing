@@ -112,8 +112,6 @@ def ending(img_input, struct_path):
 
 
 def erosionGray3(Imagem):
-    """
-    """
 	matrizImagem = Imagem.load()
 	A, L = Imagem.size
 	Matriz = {}
@@ -137,8 +135,6 @@ def erosionGray3(Imagem):
 
 
 def erosionGray5(Imagem):
-    """
-    """
 	matrizImagem = Imagem.load()
 	A, L = Imagem.size
 	Matriz = {}
@@ -166,8 +162,6 @@ def erosionGray5(Imagem):
 
 
 def dilationGray3(Imagem):
-    """
-    """
 	matrizImagem = Imagem.load()
 	A, L = Imagem.size
 	Matriz = {}
@@ -192,8 +186,6 @@ def dilationGray3(Imagem):
 
 
 def dilationGray5(Imagem):
-    """
-    """
 	matrizImagem = Imagem.load()
 	A, L = Imagem.size
 	Matriz = {}

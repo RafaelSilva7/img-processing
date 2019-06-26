@@ -18,10 +18,16 @@ $ python3 main.py -i <path> -a equalize -o <name>
 ```
 $ python3 main.py -i <path> -a <algorithm> -f <float> [<float>] -o <name>
 ```
-* Filters (Laplacian and Sobel)
+* Operators (arithmetic: add, subtract, division*, mltipy* and geometric: mirrorH, mirrorV, rotate*)
 ```
-$ python3 main.py -i <path> -a <algorithm> -m <mask> -o <name>
+$ python3 main.py -i <path1> <path2> [<float1>, <float2>] -a <algorithm> -o <name>
 ```
+* Morphology (binary: dilation, erosion, extractContours, opening*, ending* and gray: dilationGray3, dilationGray5, erosionGray3, erosionGray5)
+```
+$ python3 main.py -i <path> -a <algorithm> -e <path> -o <name>
+```
+
+*still in development
 
 ### Prerequisites
 Python3.6
@@ -68,6 +74,8 @@ Options:
   -o name.png, --output=name.png
                         Name of output image. e.g: lena.png
   -m name, --mask=name  Mask name of filtering algorithms
+  -e path, --structElement=path
+                        Structuring element for morphology algorithms.
 ```
 Example of run a test:
 ```
